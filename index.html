@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matteo France — Prévisions officielles de la caserne</title>
+<meta name="description" content="Matteo France : le service météo le plus commenté de la caserne. Prévisions, vigilance bavardage et bulletin du matin par Matteo lui-même.">
+<style>
+  :root{
+    --bleu:#0b3d91;
+    --bleu-fonce:#082b66;
+    --bleu-clair:#e8f0fb;
+    --ciel:#dbeafe;
+    --jaune:#f6c445;
+    --orange:#f0842c;
+    --rouge:#d92d20;
+    --vert:#2e9e5b;
+    --texte:#1f2937;
+    --gris:#6b7280;
+    --bord:#d7dde8;
+    --blanc:#fff;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#f3f5f9;color:var(--texte);line-height:1.5}
+  a{color:var(--bleu);text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+  /* Bandeau alerte */
+  .alerte{background:var(--orange);color:#fff;font-weight:600;font-size:.95rem;padding:8px 0;text-align:center}
+  .alerte span{background:#fff;color:var(--orange);border-radius:4px;padding:1px 8px;margin-right:8px;font-size:.8rem;text-transform:uppercase}
+
+  /* Header */
+  header{background:var(--bleu);color:#fff}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .icone{width:48px;height:48px;background:#fff;border-radius:50%;display:grid;place-items:center;font-size:28px}
+  .logo h1{font-size:1.6rem;letter-spacing:.5px;line-height:1.1}
+  .logo small{display:block;font-size:.7rem;font-weight:400;opacity:.85;letter-spacing:1px;text-transform:uppercase}
+  .recherche{flex:1;max-width:420px;min-width:0;display:flex;background:#fff;border-radius:6px;overflow:hidden}
+  .recherche input{flex:1;min-width:0;width:100%;border:0;padding:10px 12px;font-size:16px;color:var(--texte)}
+  @media(max-width:600px){
+    .top{flex-direction:column;align-items:stretch;padding:12px 0}
+    .logo{justify-content:center}
+    .logo h1{font-size:1.35rem}
+    .recherche{max-width:none;width:100%}
+    nav ul{overflow-x:auto;flex-wrap:nowrap;white-space:nowrap;-webkit-overflow-scrolling:touch}
+    nav li a{padding:11px 12px;font-size:.85rem}
+    .bulletin{padding:20px}
+    .bulletin h3{font-size:1.5rem}
+    .alerte{font-size:.85rem;padding:8px 12px}
+    h2{font-size:1.15rem}
+    .indic .val{font-size:1.6rem}
+  }
+  .recherche button{border:0;background:var(--jaune);padding:0 16px;font-weight:700;color:var(--bleu-fonce);cursor:pointer}
+  nav{background:var(--bleu-fonce)}
+  nav ul{list-style:none;display:flex;flex-wrap:wrap}
+  nav li a{display:block;color:#fff;padding:12px 16px;font-size:.9rem;font-weight:600;border-bottom:3px solid transparent}
+  nav li a:hover,nav li a.actif{border-bottom-color:var(--jaune);background:rgba(255,255,255,.06)}
+
+  /* Partenaire */
+  .partenaire{background:#fff;border-top:4px solid #e2001a;border-bottom:1px solid var(--bord)}
+  .partenaire .wrap{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 16px;flex-wrap:wrap}
+  .partenaire .txt{font-size:1.25rem;font-weight:800;color:var(--texte);letter-spacing:.3px}
+  .partenaire .txt small{display:block;font-size:.75rem;font-weight:500;color:var(--gris);letter-spacing:1px;text-transform:uppercase}
+  .partenaire .logo-part{height:56px;display:flex;align-items:center}
+  .partenaire .logo-part img{height:56px;width:auto}
+  .partenaire .logo-part .fallback{background:#e2001a;color:#fff;font-weight:900;font-size:1.5rem;padding:6px 16px;border-radius:4px;letter-spacing:.5px;font-style:italic}
+  @media(max-width:600px){.partenaire .txt{font-size:1.05rem;text-align:center}}
+  /* Sections */
+  section{margin:28px 0}
+  h2{color:var(--bleu);font-size:1.3rem;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--bleu);display:flex;align-items:center;gap:8px}
+  .carte{background:#fff;border:1px solid var(--bord);border-radius:8px;padding:18px}
+  .grille{display:grid;gap:18px}
+  .g2{grid-template-columns:1fr 1fr}
+  @media(max-width:760px){.g2{grid-template-columns:1fr}}
+
+  /* Hero bulletin */
+  .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
+  @media(max-width:760px){.hero{grid-template-columns:1fr}}
+  .bulletin{background:linear-gradient(160deg,#1257c9 0%,#0b3d91 70%);color:#fff;border-radius:10px;padding:26px;position:relative;overflow:hidden}
+  .bulletin::after{content:"☁️";position:absolute;right:-10px;bottom:-30px;font-size:11rem;opacity:.12}
+  .bulletin .etiquette{font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;opacity:.85}
+  .bulletin h3{font-size:2rem;margin:6px 0 10px;line-height:1.15}
+  .bulletin p{font-size:1.05rem;opacity:.95;max-width:520px}
+  .bulletin .signature{margin-top:18px;font-style:italic;opacity:.9;font-size:.9rem}
+  .portrait{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+  .portrait .photo{width:150px;height:150px;border-radius:50%;background:var(--ciel);border:4px solid var(--bleu);display:grid;place-items:center;font-size:70px;overflow:hidden}
+  .portrait .photo img{width:100%;height:100%;object-fit:cover}
+  .portrait strong{font-size:1.15rem;color:var(--bleu)}
+  .portrait em{color:var(--gris);font-size:.9rem}
+
+  /* Prévisions */
+  .jours{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+  @media(max-width:900px){.jours{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:560px){.jours{grid-template-columns:repeat(2,1fr)}}
+  .jour{background:#fff;border:1px solid var(--bord);border-radius:8px;text-align:center;padding:12px 8px}
+  .jour .nom{font-weight:700;color:var(--bleu);font-size:.85rem;text-transform:uppercase}
+  .jour .ico{font-size:2.2rem;margin:6px 0}
+  .jour .temp{font-weight:700}
+  .jour .temp span{color:var(--gris);font-weight:400}
+  .jour .fiab{margin-top:8px;font-size:.72rem;color:var(--gris)}
+  .jour .fiab b{color:var(--rouge)}
+
+  /* Vigilance */
+  .vig{display:flex;flex-direction:column;gap:10px}
+  .niveau{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:6px;border-left:8px solid}
+  .niveau.v{border-color:var(--vert);background:#eaf7ee}
+  .niveau.j{border-color:var(--jaune);background:#fff8e1}
+  .niveau.o{border-color:var(--orange);background:#fff1e6}
+  .niveau.r{border-color:var(--rouge);background:#fdecec}
+  .niveau strong{min-width:70px}
+  .niveau.actif{outline:2px solid var(--orange)}
+  .badge{margin-left:auto;background:var(--orange);color:#fff;font-size:.7rem;padding:2px 8px;border-radius:99px;text-transform:uppercase;font-weight:700}
+
+  /* Indicateurs */
+  .indics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:760px){.indics{grid-template-columns:repeat(2,1fr)}}
+  .indic{background:#fff;border:1px solid var(--bord);border-radius:8px;padding:14px;text-align:center}
+  .indic .val{font-size:2rem;font-weight:800;color:var(--bleu)}
+  .indic .lab{font-size:.8rem;color:var(--gris)}
+
+  /* Citations */
+  .citations{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.citations{grid-template-columns:1fr}}
+  blockquote{background:#fff;border:1px solid var(--bord);border-radius:8px;padding:16px;font-style:italic;position:relative}
+  blockquote::before{content:"“";position:absolute;left:10px;top:-8px;font-size:3rem;color:var(--ciel);font-family:Georgia,serif}
+  blockquote footer{margin-top:8px;font-style:normal;font-size:.8rem;color:var(--gris)}
+
+  /* Lexique */
+  dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  dt{font-weight:700;color:var(--bleu)}
+  @media(max-width:560px){dl{grid-template-columns:1fr}dt{margin-top:8px}}
+
+  /* Pied */
+  footer.pied{background:var(--bleu-fonce);color:#cbd5e1;padding:26px 0;margin-top:40px;font-size:.85rem}
+  footer.pied .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  footer.pied a{color:#fff}
+  .disclaimer{font-size:.75rem;opacity:.75;width:100%;border-top:1px solid rgba(255,255,255,.15);padding-top:12px;margin-top:6px}
+  .maj{color:var(--gris);font-size:.8rem;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="alerte"><span>Vigilance orange</span> Risque élevé de bulletin météo non sollicité pendant la pause café — restez à couvert.</div>
+
+<header>
+  <div class="wrap top">
+    <div class="logo">
+      <div class="icone">🌤️</div>
+      <h1>MATTEO FRANCE<small>Service météo officiel de la caserne</small></h1>
+    </div>
+    <form class="recherche" onsubmit="event.preventDefault();alert('Résultat : « Il va faire le temps qu\'il fera. » — Matteo');">
+      <input type="text" placeholder="Demandez la météo à Matteo…">
+      <button type="submit">OK</button>
+    </form>
+  </div>
+  <nav>
+    <ul class="wrap">
+      <li><a href="#bulletin" class="actif">Bulletin du matin</a></li>
+      <li><a href="#previsions">Prévisions caserne</a></li>
+      <li><a href="#vigilance">Vigilance bavardage</a></li>
+      <li><a href="#indicateurs">Indicateurs</a></li>
+      <li><a href="#citations">Matteo a dit</a></li>
+      <li><a href="#lexique">Lexique</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="partenaire">
+  <div class="wrap">
+    <div class="txt"><small>Bulletin diffusé</small>En partenariat avec</div>
+    <div class="logo-part">
+      <img src="carglass.png" alt="Carglass">
+    </div>
+    <div class="txt" style="font-size:.9rem;font-weight:500;color:var(--gris)">« Matteo répare, Matteo remplace… la météo. »</div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section id="bulletin" class="hero">
+    <div class="bulletin">
+      <div class="etiquette">Bulletin officiel — édition du matin, 6h58</div>
+      <h3>« Alors ce matin, moi je te dis, ça va se dégager vers midi. »</h3>
+      <p>Comme chaque jour, Matteo a consulté trois applis, un baromètre et son genou droit avant même que la cafetière ait fini de couler. Le verdict est tombé sans que personne ne l'ait demandé.</p>
+      <p class="signature">— Matteo, prévisionniste en chef, autoproclamé, incontesté.</p>
+    </div>
+    <div class="carte portrait">
+      <div class="photo">
+        <img src="data:image/jpeg;base64,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" alt="Matteo">
+      </div>
+      <strong>Matteo</strong>
+      <em>Sapeur-pompier · Prévisionniste · Homme qui a « senti » la pluie avant tout le monde</em>
+      <em>Fiabilité annoncée : 100 % · Fiabilité constatée : voir plus bas</em>
+    </div>
+  </section>
+
+  <section id="previsions">
+    <h2>📅 Prévisions à 7 jours pour la caserne</h2>
+    <div class="jours">
+      <div class="jour"><div class="nom">Lun</div><div class="ico">☀️</div><div class="temp">24° <span>/ 15°</span></div><div class="fiab">Fiabilité Matteo : <b>« sûr à 100 % »</b></div></div>
+      <div class="jour"><div class="nom">Mar</div><div class="ico">🌦️</div><div class="temp">21° <span>/ 14°</span></div><div class="fiab">« Ça peut basculer »</div></div>
+      <div class="jour"><div class="nom">Mer</div><div class="ico">⛈️</div><div class="temp">19° <span>/ 13°</span></div><div class="fiab">« Je l'avais dit »</div></div>
+      <div class="jour"><div class="nom">Jeu</div><div class="ico">🌫️</div><div class="temp">?? <span>/ ??</span></div><div class="fiab">Matteo était de repos</div></div>
+      <div class="jour"><div class="nom">Ven</div><div class="ico">💨</div><div class="temp">22° <span>/ 12°</span></div><div class="fiab">« Attention au vent, hein »</div></div>
+      <div class="jour"><div class="nom">Sam</div><div class="ico">☀️</div><div class="temp">27° <span>/ 16°</span></div><div class="fiab">« Là c'est l'été, je te le garantis »</div></div>
+      <div class="jour"><div class="nom">Dim</div><div class="ico">🌧️</div><div class="temp">18° <span>/ 14°</span></div><div class="fiab">« Ouais bon, ça, on pouvait pas savoir »</div></div>
+    </div>
+    <p class="maj">Dernière mise à jour : ce matin, à voix haute, devant tout le monde.</p>
+  </section>
+
+  <section id="vigilance" class="grille g2">
+    <div>
+      <h2>⚠️ Vigilance bavardage météo</h2>
+      <div class="carte vig">
+        <div class="niveau v"><strong>Vert</strong> Matteo est en intervention. Aucun bulletin en cours.</div>
+        <div class="niveau j"><strong>Jaune</strong> Matteo a ouvert son appli météo. Un commentaire est probable dans les 5 minutes.</div>
+        <div class="niveau o actif"><strong>Orange</strong> Matteo a dit « alors moi j'ai regardé ce matin ». Le bulletin est inévitable.<span class="badge">En cours</span></div>
+        <div class="niveau r"><strong>Rouge</strong> Matteo contredit la météo à la télé, en direct. Ne pas argumenter. Se mettre à l'abri.</div>
+      </div>
+    </div>
+    <div>
+      <h2>📻 Consignes de sécurité</h2>
+      <div class="carte">
+        <ul style="padding-left:18px;display:grid;gap:8px">
+          <li>Ne jamais dire « je pense qu'il va pleuvoir » en sa présence sans source.</li>
+          <li>Ne pas mentionner une autre appli météo que la sienne.</li>
+          <li>Hocher la tête à intervalles réguliers. Cela suffit.</li>
+          <li>En cas de désaccord entre Matteo et le radar de pluie, le radar a tort.</li>
+          <li>Après une prévision ratée, laisser passer 24 h avant d'en parler. Ou jamais.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="indicateurs">
+    <h2>📊 Indicateurs du jour</h2>
+    <div class="indics">
+      <div class="indic"><div class="val">7</div><div class="lab">bulletins avant 8h</div></div>
+      <div class="indic"><div class="val">3</div><div class="lab">applis consultées ce matin</div></div>
+      <div class="indic"><div class="val">100 %</div><div class="lab">de confiance affichée</div></div>
+      <div class="indic"><div class="val">42 %</div><div class="lab">de prévisions vérifiées (source : le reste de l'équipe)</div></div>
+    </div>
+  </section>
+
+  <section id="citations">
+    <h2>💬 Matteo a dit</h2>
+    <div class="citations">
+      <blockquote>Non mais là, tu vois le ciel ? Ça, c'est un ciel de traîne. Je te le dis.<footer>Devant la caserne, 7h12</footer></blockquote>
+      <blockquote>Météo-France ils annoncent du soleil, mais moi je sens qu'il va y avoir une averse vers 15h.<footer>Il a plu à 15h04. Il ne s'en est toujours pas remis.</footer></blockquote>
+      <blockquote>De toute façon la météo, c'est pas une science exacte… sauf quand c'est moi.<footer>Réunion du matin, sans transition</footer></blockquote>
+    </div>
+  </section>
+
+  <section id="lexique">
+    <h2>📖 Lexique Matteo France</h2>
+    <div class="carte">
+      <dl>
+        <dt>Le Matteo</dt><dd>Unité de mesure d'un bulletin météo non demandé. 1 Matteo ≈ 4 minutes de monologue.</dd>
+        <dt>Front froid</dt><dd>Ambiance dans la salle après que Matteo a dit « je l'avais prévu ».</dd>
+        <dt>Anticyclone</dt><dd>Matteo un jour où il a eu raison. Rare, mais persistant.</dd>
+        <dt>Dépression</dt><dd>Matteo un jour où il a plu alors qu'il avait dit soleil.</dd>
+        <dt>Prévision saisonnière</dt><dd>« Cet été il fera chaud. » Prononcée chaque année en mars, avec assurance.</dd>
+        <dt>Rafale</dt><dd>Enchaînement de trois bulletins sans respirer.</dd>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pied">
+  <div class="wrap">
+    <div>© Matteo France — Prévisions garanties, résultats non contractuels.</div>
+    <div><a href="#bulletin">Haut de page</a></div>
+    <div class="disclaimer">Site parodique réalisé entre collègues, avec affection. Ce site n'a aucun lien avec Météo-France, l'établissement public national de météorologie. Aucune prévision ici ne doit être utilisée pour autre chose que se moquer gentiment de Matteo.</div>
+  </div>
+</footer>
+
+</body>
+</html>
