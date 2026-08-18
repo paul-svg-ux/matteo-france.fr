@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matteo France — Prévisions officielles de la caserne</title>
+<meta name="description" content="Matteo France : le service météo le plus commenté de la caserne. Prévisions, vigilance bavardage et bulletin du matin par Matteo lui-même.">
+<style>
+  :root{
+    --bleu:#0b3d91;
+    --bleu-fonce:#082b66;
+    --bleu-clair:#e8f0fb;
+    --ciel:#dbeafe;
+    --jaune:#f6c445;
+    --orange:#f0842c;
+    --rouge:#d92d20;
+    --vert:#2e9e5b;
+    --texte:#1f2937;
+    --gris:#6b7280;
+    --bord:#d7dde8;
+    --blanc:#fff;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#f3f5f9;color:var(--texte);line-height:1.5}
+  a{color:var(--bleu);text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+  /* Bandeau alerte */
+  .alerte{background:var(--orange);color:#fff;font-weight:600;font-size:.95rem;padding:8px 0;text-align:center}
+  .alerte span{background:#fff;color:var(--orange);border-radius:4px;padding:1px 8px;margin-right:8px;font-size:.8rem;text-transform:uppercase}
+
+  /* Header */
+  header{background:var(--bleu);color:#fff}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .icone{width:48px;height:48px;background:#fff;border-radius:50%;display:grid;place-items:center;font-size:28px}
+  .logo h1{font-size:1.6rem;letter-spacing:.5px;line-height:1.1}
+  .logo small{display:block;font-size:.7rem;font-weight:400;opacity:.85;letter-spacing:1px;text-transform:uppercase}
+  .recherche{flex:1;max-width:420px;display:flex;background:#fff;border-radius:6px;overflow:hidden}
+  .recherche input{flex:1;border:0;padding:10px 12px;font-size:.95rem;color:var(--texte)}
+  .recherche button{border:0;background:var(--jaune);padding:0 16px;font-weight:700;color:var(--bleu-fonce);cursor:pointer}
+  nav{background:var(--bleu-fonce)}
+  nav ul{list-style:none;display:flex;flex-wrap:wrap}
+  nav li a{display:block;color:#fff;padding:12px 16px;font-size:.9rem;font-weight:600;border-bottom:3px solid transparent}
+  nav li a:hover,nav li a.actif{border-bottom-color:var(--jaune);background:rgba(255,255,255,.06)}
+
+  /* Sections */
+  section{margin:28px 0}
+  h2{color:var(--bleu);font-size:1.3rem;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--bleu);display:flex;align-items:center;gap:8px}
+  .carte{background:#fff;border:1px solid var(--bord);border-radius:8px;padding:18px}
+  .grille{display:grid;gap:18px}
+  .g2{grid-template-columns:1fr 1fr}
+  @media(max-width:760px){.g2{grid-template-columns:1fr}}
+
+  /* Hero bulletin */
+  .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
+  @media(max-width:760px){.hero{grid-template-columns:1fr}}
+  .bulletin{background:linear-gradient(160deg,#1257c9 0%,#0b3d91 70%);color:#fff;border-radius:10px;padding:26px;position:relative;overflow:hidden}
+  .bulletin::after{content:"☁️";position:absolute;right:-10px;bottom:-30px;font-size:11rem;opacity:.12}
+  .bulletin .etiquette{font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;opacity:.85}
+  .bulletin h3{font-size:2rem;margin:6px 0 10px;line-height:1.15}
+  .bulletin p{font-size:1.05rem;opacity:.95;max-width:520px}
+  .bulletin .signature{margin-top:18px;font-style:italic;opacity:.9;font-size:.9rem}
+  .portrait{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+  .portrait .photo{width:150px;height:150px;border-radius:50%;background:var(--ciel);border:4px solid var(--bleu);display:grid;place-items:center;font-size:70px;overflow:hidden}
+  .portrait .photo img{width:100%;height:100%;object-fit:cover}
+  .portrait strong{font-size:1.15rem;color:var(--bleu)}
+  .portrait em{color:var(--gris);font-size:.9rem}
+
+  /* Prévisions */
+  .jours{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+  @media(max-width:900px){.jours{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:560px){.jours{grid-template-columns:repeat(2,1fr)}}
+  .jour{background:#fff;border:1px solid var(--bord);border-radius:8px;text-align:center;padding:12px 8px}
+  .jour .nom{font-weight:700;color:var(--bleu);font-size:.85rem;text-transform:uppercase}
+  .jour .ico{font-size:2.2rem;margin:6px 0}
+  .jour .temp{font-weight:700}
+  .jour .temp span{color:var(--gris);font-weight:400}
+  .jour .fiab{margin-top:8px;font-size:.72rem;color:var(--gris)}
+  .jour .fiab b{color:var(--rouge)}
+
+  /* Vigilance */
+  .vig{display:flex;flex-direction:column;gap:10px}
+  .niveau{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:6px;border-left:8px solid}
+  .niveau.v{border-color:var(--vert);background:#eaf7ee}
+  .niveau.j{border-color:var(--jaune);background:#fff8e1}
+  .niveau.o{border-color:var(--orange);background:#fff1e6}
+  .niveau.r{border-color:var(--rouge);background:#fdecec}
+  .niveau strong{min-width:70px}
+  .niveau.actif{outline:2px solid var(--orange)}
+  .badge{margin-left:auto;background:var(--orange);color:#fff;font-size:.7rem;padding:2px 8px;border-radius:99px;text-transform:uppercase;font-weight:700}
+
+  /* Indicateurs */
+  .indics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:760px){.indics{grid-template-columns:repeat(2,1fr)}}
+  .indic{background:#fff;border:1px solid var(--bord);border-radius:8px;padding:14px;text-align:center}
+  .indic .val{font-size:2rem;font-weight:800;color:var(--bleu)}
+  .indic .lab{font-size:.8rem;color:var(--gris)}
+
+  /* Citations */
+  .citations{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.citations{grid-template-columns:1fr}}
+  blockquote{background:#fff;border:1px solid var(--bord);border-radius:8px;padding:16px;font-style:italic;position:relative}
+  blockquote::before{content:"“";position:absolute;left:10px;top:-8px;font-size:3rem;color:var(--ciel);font-family:Georgia,serif}
+  blockquote footer{margin-top:8px;font-style:normal;font-size:.8rem;color:var(--gris)}
+
+  /* Lexique */
+  dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  dt{font-weight:700;color:var(--bleu)}
+  @media(max-width:560px){dl{grid-template-columns:1fr}dt{margin-top:8px}}
+
+  /* Pied */
+  footer.pied{background:var(--bleu-fonce);color:#cbd5e1;padding:26px 0;margin-top:40px;font-size:.85rem}
+  footer.pied .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  footer.pied a{color:#fff}
+  .disclaimer{font-size:.75rem;opacity:.75;width:100%;border-top:1px solid rgba(255,255,255,.15);padding-top:12px;margin-top:6px}
+  .maj{color:var(--gris);font-size:.8rem;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="alerte"><span>Vigilance orange</span> Risque élevé de bulletin météo non sollicité pendant la pause café — restez à couvert.</div>
+
+<header>
+  <div class="wrap top">
+    <div class="logo">
+      <div class="icone">🌤️</div>
+      <h1>MATTEO FRANCE<small>Service météo officiel de la caserne</small></h1>
+    </div>
+    <form class="recherche" onsubmit="event.preventDefault();alert('Résultat : « Il va faire le temps qu\'il fera. » — Matteo');">
+      <input type="text" placeholder="Demandez la météo à Matteo…">
+      <button type="submit">OK</button>
+    </form>
+  </div>
+  <nav>
+    <ul class="wrap">
+      <li><a href="#bulletin" class="actif">Bulletin du matin</a></li>
+      <li><a href="#previsions">Prévisions caserne</a></li>
+      <li><a href="#vigilance">Vigilance bavardage</a></li>
+      <li><a href="#indicateurs">Indicateurs</a></li>
+      <li><a href="#citations">Matteo a dit</a></li>
+      <li><a href="#lexique">Lexique</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section id="bulletin" class="hero">
+    <div class="bulletin">
+      <div class="etiquette">Bulletin officiel — édition du matin, 6h58</div>
+      <h3>« Alors ce matin, moi je te dis, ça va se dégager vers midi. »</h3>
+      <p>Comme chaque jour, Matteo a consulté trois applis, un baromètre et son genou droit avant même que la cafetière ait fini de couler. Le verdict est tombé sans que personne ne l'ait demandé.</p>
+      <p class="signature">— Matteo, prévisionniste en chef, autoproclamé, incontesté.</p>
+    </div>
+    <div class="carte portrait">
+      <div class="photo">
+        <!-- Remplace l'emoji par une photo : <img src="matteo.jpg" alt="Matteo"> -->
+        👨‍🚒
+      </div>
+      <strong>Matteo</strong>
+      <em>Sapeur-pompier · Prévisionniste · Homme qui a « senti » la pluie avant tout le monde</em>
+      <em>Fiabilité annoncée : 100 % · Fiabilité constatée : voir plus bas</em>
+    </div>
+  </section>
+
+  <section id="previsions">
+    <h2>📅 Prévisions à 7 jours pour la caserne</h2>
+    <div class="jours">
+      <div class="jour"><div class="nom">Lun</div><div class="ico">☀️</div><div class="temp">24° <span>/ 15°</span></div><div class="fiab">Fiabilité Matteo : <b>« sûr à 100 % »</b></div></div>
+      <div class="jour"><div class="nom">Mar</div><div class="ico">🌦️</div><div class="temp">21° <span>/ 14°</span></div><div class="fiab">« Ça peut basculer »</div></div>
+      <div class="jour"><div class="nom">Mer</div><div class="ico">⛈️</div><div class="temp">19° <span>/ 13°</span></div><div class="fiab">« Je l'avais dit »</div></div>
+      <div class="jour"><div class="nom">Jeu</div><div class="ico">🌫️</div><div class="temp">?? <span>/ ??</span></div><div class="fiab">Matteo était de repos</div></div>
+      <div class="jour"><div class="nom">Ven</div><div class="ico">💨</div><div class="temp">22° <span>/ 12°</span></div><div class="fiab">« Attention au vent, hein »</div></div>
+      <div class="jour"><div class="nom">Sam</div><div class="ico">☀️</div><div class="temp">27° <span>/ 16°</span></div><div class="fiab">« Là c'est l'été, je te le garantis »</div></div>
+      <div class="jour"><div class="nom">Dim</div><div class="ico">🌧️</div><div class="temp">18° <span>/ 14°</span></div><div class="fiab">« Ouais bon, ça, on pouvait pas savoir »</div></div>
+    </div>
+    <p class="maj">Dernière mise à jour : ce matin, à voix haute, devant tout le monde.</p>
+  </section>
+
+  <section id="vigilance" class="grille g2">
+    <div>
+      <h2>⚠️ Vigilance bavardage météo</h2>
+      <div class="carte vig">
+        <div class="niveau v"><strong>Vert</strong> Matteo est en intervention. Aucun bulletin en cours.</div>
+        <div class="niveau j"><strong>Jaune</strong> Matteo a ouvert son appli météo. Un commentaire est probable dans les 5 minutes.</div>
+        <div class="niveau o actif"><strong>Orange</strong> Matteo a dit « alors moi j'ai regardé ce matin ». Le bulletin est inévitable.<span class="badge">En cours</span></div>
+        <div class="niveau r"><strong>Rouge</strong> Matteo contredit la météo à la télé, en direct. Ne pas argumenter. Se mettre à l'abri.</div>
+      </div>
+    </div>
+    <div>
+      <h2>📻 Consignes de sécurité</h2>
+      <div class="carte">
+        <ul style="padding-left:18px;display:grid;gap:8px">
+          <li>Ne jamais dire « je pense qu'il va pleuvoir » en sa présence sans source.</li>
+          <li>Ne pas mentionner une autre appli météo que la sienne.</li>
+          <li>Hocher la tête à intervalles réguliers. Cela suffit.</li>
+          <li>En cas de désaccord entre Matteo et le radar de pluie, le radar a tort.</li>
+          <li>Après une prévision ratée, laisser passer 24 h avant d'en parler. Ou jamais.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="indicateurs">
+    <h2>📊 Indicateurs du jour</h2>
+    <div class="indics">
+      <div class="indic"><div class="val">7</div><div class="lab">bulletins avant 8h</div></div>
+      <div class="indic"><div class="val">3</div><div class="lab">applis consultées ce matin</div></div>
+      <div class="indic"><div class="val">100 %</div><div class="lab">de confiance affichée</div></div>
+      <div class="indic"><div class="val">42 %</div><div class="lab">de prévisions vérifiées (source : le reste de l'équipe)</div></div>
+    </div>
+  </section>
+
+  <section id="citations">
+    <h2>💬 Matteo a dit</h2>
+    <div class="citations">
+      <blockquote>Non mais là, tu vois le ciel ? Ça, c'est un ciel de traîne. Je te le dis.<footer>Devant la caserne, 7h12</footer></blockquote>
+      <blockquote>Météo-France ils annoncent du soleil, mais moi je sens qu'il va y avoir une averse vers 15h.<footer>Il a plu à 15h04. Il ne s'en est toujours pas remis.</footer></blockquote>
+      <blockquote>De toute façon la météo, c'est pas une science exacte… sauf quand c'est moi.<footer>Réunion du matin, sans transition</footer></blockquote>
+    </div>
+  </section>
+
+  <section id="lexique">
+    <h2>📖 Lexique Matteo France</h2>
+    <div class="carte">
+      <dl>
+        <dt>Le Matteo</dt><dd>Unité de mesure d'un bulletin météo non demandé. 1 Matteo ≈ 4 minutes de monologue.</dd>
+        <dt>Front froid</dt><dd>Ambiance dans la salle après que Matteo a dit « je l'avais prévu ».</dd>
+        <dt>Anticyclone</dt><dd>Matteo un jour où il a eu raison. Rare, mais persistant.</dd>
+        <dt>Dépression</dt><dd>Matteo un jour où il a plu alors qu'il avait dit soleil.</dd>
+        <dt>Prévision saisonnière</dt><dd>« Cet été il fera chaud. » Prononcée chaque année en mars, avec assurance.</dd>
+        <dt>Rafale</dt><dd>Enchaînement de trois bulletins sans respirer.</dd>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pied">
+  <div class="wrap">
+    <div>© Matteo France — Prévisions garanties, résultats non contractuels.</div>
+    <div><a href="#bulletin">Haut de page</a></div>
+    <div class="disclaimer">Site parodique réalisé entre collègues, avec affection. Ce site n'a aucun lien avec Météo-France, l'établissement public national de météorologie. Aucune prévision ici ne doit être utilisée pour autre chose que se moquer gentiment de Matteo.</div>
+  </div>
+</footer>
+
+</body>
+</html>
